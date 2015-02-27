@@ -1,7 +1,6 @@
 <?php
 require_once 'google-api-php-client/src/Google/autoload.php';
-
-
+session_start();
 if($_SERVER["REQUEST_METHOD"] == "POST" || isset($_GET['code']) || (isset($_SESSION['access_token']) && $_SESSION['access_token']) ){
 
 	//---------------------------------------------------------------
@@ -10,21 +9,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST" || isset($_GET['code']) || (isset($_SESS
 	if(isset($_POST['submit'])){		
 		$url = $_POST['url'];
 		$extension = "";
+		$filename = basename($url);
 		$arr = explode(".",$url);
 		foreach($arr as $t){
 			$extension = $t;
 		}
-		$newfname = 'a.'.$extension;
+		$_SESSION['filename']=$filename;
+		$_SESSION['extension']=$extension;
+		unlink($_SESSION['filename']); //remove the file if exist
+		$newfname = $filename;
 		$file = fopen ($url, "rb");
 		if ($file) {
 		  $newf = fopen ($newfname, "wb");
-
 		  if ($newf)
 		  while(!feof($file)) {
 			fwrite($newf, fread($file, 1024 * 8 ), 1024 * 8 );
 		  }
 		}
-		
 		if ($newf) {
 			fclose($newf);
 		}
@@ -40,7 +41,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST" || isset($_GET['code']) || (isset($_SESS
 	//set the URL of this same file & set the same url in google developer console.
 	$client->setRedirectUri('<URL_OF_THIS_PAGE_MUST_BE_SAME_TO_Redirect_URIs_IN_GOOGLE_DEVELOPER_CONSOLE>');
 	$client->setScopes(array('https://www.googleapis.com/auth/drive.file'));
-	session_start();
+	
+	
 	if (isset($_GET['code']) || (isset($_SESSION['access_token']) && $_SESSION['access_token'])) {
 		
 		if (isset($_GET['code'])) {
@@ -53,10 +55,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST" || isset($_GET['code']) || (isset($_SESS
 
 		//Insert a file
 		$file = new Google_Service_Drive_DriveFile();
-		$file->setTitle(uniqid().$extension);
-		$file->setDescription('Document uploaded through link');
+		$file->setTitle($_SESSION['filename']);
+		$file->setDescription('Document uploaded through link | save2drive.MyTechBlog.in');
 
-		$data = file_get_contents($newfname);
+		$data = file_get_contents($_SESSION['filename']);
 
 		$createdFile = $service->files->insert($file, array(
 			  'data' => $data,
@@ -66,8 +68,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST" || isset($_GET['code']) || (isset($_SESS
 		//---------------------------------------------------------------
 		// 3. removing the file from own server
 		//---------------------------------------------------------------
-		unlink($newfname); //remove the file
-
+		unlink($_SESSION['filename']); //remove the file
+		session_destroy();
 	} else {
 		$authUrl = $client->createAuthUrl();
 		header('Location: ' . $authUrl);
