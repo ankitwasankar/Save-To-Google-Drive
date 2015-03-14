@@ -13,5 +13,5 @@ Simple PHP scripts for downloading files to server or google drive from link.
 4. Finally edit the following details in the file:<br>
     a. Copy &lt;CLIENT_ID&gt; from the Google developer console  <br>
     b. Copy &lt;CLIENT_SECRET&gt; from the Google developer console <br>
-    c. Add &lt;COMPLETE_URL_OF_LinkUploadToGoogleDrive.php&gt;  <br>
+    c. Edit &lt;COMPLETE_URL_OF_LinkUploadToGoogleDrive.php&gt;  <br>
 
