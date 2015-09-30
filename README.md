@@ -16,6 +16,6 @@ Simple PHP scripts for downloading files to server or google drive from link.
     c. Edit &lt;COMPLETE_URL_OF_LinkUploadToGoogleDrive.php&gt;  <br>
 
 # Demo example
-Link: <a href='http://save2drive.mytechblog.in/' target='_blank'>save2drive.MyTechBlog.in</a><br>
+Link: <a href='http://github.mytechblog.in/SaveToDrive/' target='_blank'>save2drive.MyTechBlog.in</a><br>
 Then select the third link to download file directly to google drive from link.
 
